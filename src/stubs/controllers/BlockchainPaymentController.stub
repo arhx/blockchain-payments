@@ -1,0 +1,19 @@
+<?php namespace {{namespace}};
+
+use Illuminate\Http\Request;
+
+class BlockchainPaymentController extends Controller
+{
+	public function callback(Request $request, $user_id){
+
+		$user = App\Models\User::findOrFail($user_id);
+
+		$transaction_hash = $request->transaction_hash;
+		$amount_btc = sprintf('%.8f',$request->value / 100000000);
+		$confirmations = $request->confirmations;
+
+		if($confirmations >= 3) {
+			$user->increment('balance',$amount_btc);
+		}
+	}
+}

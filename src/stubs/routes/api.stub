@@ -1,0 +1,2 @@
+
+Route::get('blockchain/callback/{user_id}','BlockchainPaymentsController@callback')->name('blockchain-callback');
