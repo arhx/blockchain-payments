@@ -8,12 +8,4 @@ class BlockchainPayments{
 		$api = new BlockchainRemoteApi($xpub,$api_key);
 		return $api->receive($callback_url);
 	}
-	static function postInstall($event){
-		echo "postInstall".PHP_EOL;
-		dump($event);
-	}
-	static function postPackageInstall($event){
-		echo "postPackageInstall".PHP_EOL;
-		dump($event);
-	}
 }
