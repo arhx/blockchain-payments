@@ -14,6 +14,7 @@ class BlockchainPaymentController extends Controller
 
 		if($confirmations >= 3) {
 			$user->increment('balance',$amount_btc);
+			return '*ok*';
 		}
 	}
 }
