@@ -3,9 +3,12 @@
 namespace Arhx\BlockchainPayments;
 
 use Illuminate\Console\Command;
+use Illuminate\Console\DetectsApplicationNamespace;
 
 class BlockchainPaymentsMakeCommand extends Command
 {
+
+	use DetectsApplicationNamespace;
     /**
      * The name and signature of the console command.
      *
