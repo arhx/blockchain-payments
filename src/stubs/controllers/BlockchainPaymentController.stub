@@ -1,4 +1,4 @@
-<?php namespace {{namespace}};
+<?php namespace {{namespace}}Http\Controllers;
 
 use Illuminate\Http\Request;
 
@@ -6,7 +6,7 @@ class BlockchainPaymentController extends Controller
 {
 	public function callback(Request $request, $user_id){
 
-		$user = App\Models\User::findOrFail($user_id);
+		$user = \App\User::findOrFail($user_id);
 
 		$transaction_hash = $request->transaction_hash;
 		$amount_btc = sprintf('%.8f',$request->value / 100000000);
