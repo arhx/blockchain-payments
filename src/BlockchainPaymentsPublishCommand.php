@@ -53,7 +53,7 @@ class BlockchainPaymentsPublishCommand extends Command
 	    );
 	    $this->line("Appended routes: $path");
 
-	    $this->line("Publish other files: $path");
+	    $this->line("Publish other files:");
 	    $this->call('vendor:publish', [
 		    '--provider' => BlockchainPaymentsServiceProvider::class
 	    ]);
