@@ -31,7 +31,7 @@ class BlockchainPaymentsFlushCommand extends Command
 	public function handle()
 	{
 		$userModel = config('blockchain.user_model');
-		$userModel->update([
+		$userModel::query()->update([
 			'btc_replenishment_address' => null
 		]);
 		$this->line("All replenishment addresses was flushed");
