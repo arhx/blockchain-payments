@@ -55,7 +55,7 @@ class BlockchainPaymentsPublishCommand extends Command
 
 	    $this->line("Publish other files: $path");
 	    $this->call('vendor:publish', [
-		    'provider' => BlockchainPaymentsServiceProvider::class
+		    '--provider' => BlockchainPaymentsServiceProvider::class
 	    ]);
     }
 
