@@ -1,20 +1,132 @@
 <?php namespace {{namespace}}Http\Controllers;
 
+use Arhx\BlockchainPayments\BlockchainPayments;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\BlockchainTransaction;
+use Auth;
+use Validator;
 
 class BlockchainPaymentController extends Controller
 {
-	public function callback(Request $request, $user_id){
+	/**
+	 * Функция которая при получении $request->amount генерирует адрес и показывает курс и необходимую сумму в BTC
+	 *
+	 * @param Request $request
+	 *
+	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+	 */
+	public function pay(Request $request){
+		$request->validate([
+			'amount' => 'required|numeric|min:1'
+		]);
+		$user = Auth::user();
+		if(!$user->btc_replenishment_address){
+			//Генерируем пользователю адрес пополнения
+			$user->btc_replenishment_address = BlockchainPayments::generatePaymentAddress($user->id);
+			$user->save();
+		}
 
-		$user = \App\User::findOrFail($user_id);
+		//берем текущий курс с blockchain.info
+		$btc_price = $this->getBtcPrice();
+
+		//округляем до 2 знаков запрашиваемую сумму пополнения USD
+		$amount_usd = round($request->amount,2);
+
+		//переводим запрашиваемую сумму в BTC
+		$amount_btc = $amount_usd / $btc_price;
+		$amount_btc = round($amount_btc,8);
+		$amount_btc = sprintf('%.8f',$amount_btc);
+
+		//Показываем пользователю сообщение сколько нужно отослать BTC на его адрес для получения желаемой суммы
+		$view = view('payments.replenishment_blockchain');
+		$view->amount_btc = $amount_btc;
+		$view->amount_usd = $amount_usd;
+		$view->btc_price = $btc_price;
+		$view->address = $user->btc_replenishment_address;
+		return $view;
+	}
+
+	/**
+	 * Это callback который вызывается сервером blockchain.info при получении средств на сгенерированные адреса
+	 *
+	 * @param Request $request
+	 * @param $user_id
+	 *
+	 * @return string
+	 */
+	public function callback(Request $request, $user_id){
+		$validator = Validator::make($request->all(),[
+			'transaction_hash' => 'required',
+			'value' => 'required',
+			'confirmations' => 'required',
+		]);
+
+		//Не говорим что не устроило валидатор, в целях безопасности
+		if(!$validator->valid()){
+			return 'Invalid input data';
+		}
 
 		$transaction_hash = $request->transaction_hash;
-		$amount_btc = sprintf('%.8f',$request->value / 100000000);
-		$confirmations = $request->confirmations;
 
-		if($confirmations >= 3) {
-			$user->increment('balance',$amount_btc);
+		$transaction = BlockchainTransaction::whereHash($transaction_hash)->first();
+		if(!$transaction){
+			$user = User::findOrFail($user_id);
+
+			$btc_price = $this->getBtcPrice();
+			if(!$btc_price){
+				return "Invalid btc_price: $btc_price";
+			}
+			$amount_satoshi = $request->value;
+			$amount_btc = sprintf('%.8f',$request->value / 100000000);
+			$amount_usd = round($amount_btc * $btc_price,2);
+
+			$amount_usd_received =  $amount_usd;
+
+			$transaction = new BlockchainTransaction();
+			//$transaction->payment_id = $payment->id;
+			$transaction->user_id = $user->id;
+			$transaction->hash = $transaction_hash;
+			$transaction->btc_price = $btc_price;
+			$transaction->amount_satoshi = $amount_satoshi;
+			$transaction->amount_usd = $amount_usd_received;
+			$transaction->held = false;
+		}
+
+		$transaction->confirmations = $request->confirmations;
+		$transaction->save();
+
+		if($transaction->confirmations >= 3) {
+			if(!$transaction->held){
+				$transaction->held = true;
+				$transaction->save();
+
+				//$transaction->payment->status_id = Payment::STATUS_SUCCESS_ID;
+				//$transaction->payment->save();
+
+				$transaction->user->increment('balance',$transaction->amount_usd);
+			}
 			return '*ok*';
+		}
+	}
+
+	/**
+	 * Функция возвращает курс BTC / $currency который получает через blockchain.info API
+	 *
+	 * @param string $currency
+	 *
+	 * @return bool|float
+	 */
+	public function getBtcPrice($currency = 'USD'){
+		//TODO: possible need add request cache
+		$url = 'https://blockchain.info/ticker';
+		$response = file_get_contents($url);
+		$json = json_decode($response,true);
+		if(isset($json[$currency]['buy']) && isset($json[$currency]['sell'])){
+			$price = max($json[$currency]['buy'],$json[$currency]['sell']);
+			return $price;
+		}else{
+			return false;
 		}
 	}
 }

@@ -5,7 +5,7 @@ namespace Arhx\BlockchainPayments;
 use Illuminate\Console\Command;
 use Illuminate\Console\DetectsApplicationNamespace;
 
-class BlockchainPaymentsMakeCommand extends Command
+class BlockchainPaymentsPublishCommand extends Command
 {
 
 	use DetectsApplicationNamespace;
@@ -14,14 +14,14 @@ class BlockchainPaymentsMakeCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'make:blockchain-payments';
+    protected $signature = 'blockchain-payments:publish';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create BlockchainPayments controller and route';
+    protected $description = 'Integrate BlockchainPayments to laravel project';
 
     /**
      * Execute the console command.
@@ -30,16 +30,33 @@ class BlockchainPaymentsMakeCommand extends Command
      */
     public function handle()
     {
+    	$path = app_path('Http/Controllers/BlockchainPaymentController.php');
 	    file_put_contents(
-		    app_path('Http/Controllers/BlockchainPaymentController.php'),
+		    $path,
 		    $this->compileControllerStub()
 	    );
+	    $this->line("Created Controller: $path");
 
+	    $path = base_path('routes/api.php');
 	    file_put_contents(
-		    base_path('routes/api.php'),
+		    $path,
 		    file_get_contents(__DIR__.'/stubs/routes/api.stub'),
 		    FILE_APPEND
 	    );
+	    $this->line("Appended routes: $path");
+
+	    $path = base_path('routes/web.php');
+	    file_put_contents(
+		    $path,
+		    file_get_contents(__DIR__.'/stubs/routes/web.stub'),
+		    FILE_APPEND
+	    );
+	    $this->line("Appended routes: $path");
+
+	    $this->line("Publish other files: $path");
+	    $this->call('vendor:publish', [
+		    'provider' => BlockchainPaymentsServiceProvider::class
+	    ]);
     }
 
 	/**

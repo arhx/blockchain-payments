@@ -15,7 +15,7 @@
     },
     "require": {
         "ext-json": "*",
-        "laravel/framework": "^5.4"
+        "laravel/framework": "^5.5"
     },
     "extra": {
         "laravel": {

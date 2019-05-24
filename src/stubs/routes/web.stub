@@ -1,0 +1,2 @@
+
+Route::get('blockchain/pay','BlockchainPaymentController@pay')->name('blockchain-pay');
