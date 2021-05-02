@@ -7,7 +7,7 @@
             "email": "arhx.dev@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
             "Arhx\\BlockchainPayments\\": "src\\"
@@ -15,7 +15,7 @@
     },
     "require": {
         "ext-json": "*",
-        "laravel/framework": "^5.5"
+        "laravel/framework": "^8.40"
     },
     "extra": {
         "laravel": {

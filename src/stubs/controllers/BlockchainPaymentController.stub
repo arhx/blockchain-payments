@@ -4,8 +4,8 @@ use Arhx\BlockchainPayments\BlockchainPayments;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\BlockchainTransaction;
-use Auth;
-use Validator;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class BlockchainPaymentController extends Controller
 {

@@ -1,5 +1,7 @@
 <?php namespace Arhx\BlockchainPayments;
 
+use Illuminate\Support\Arr;
+
 class BlockchainRemoteApi {
 	protected $remote_api_base = 'https://api.blockchain.info/v2';
 	protected $xpub;
@@ -31,6 +33,6 @@ class BlockchainRemoteApi {
 			'callback' => $callback
 		] );
 
-		return array_get( $response, 'address' );
+		return Arr::get( $response, 'address' );
 	}
 }

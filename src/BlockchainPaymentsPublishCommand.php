@@ -40,7 +40,7 @@ class BlockchainPaymentsPublishCommand extends Command
 	    $path = base_path('routes/api.php');
 	    file_put_contents(
 		    $path,
-		    file_get_contents(__DIR__.'/stubs/routes/api.stub'),
+		    $this->compileApiRouteStub(),
 		    FILE_APPEND
 	    );
 	    $this->line("Appended routes: $path");
@@ -48,7 +48,7 @@ class BlockchainPaymentsPublishCommand extends Command
 	    $path = base_path('routes/web.php');
 	    file_put_contents(
 		    $path,
-		    file_get_contents(__DIR__.'/stubs/routes/web.stub'),
+		    $this->compileWebRouteStub(),
 		    FILE_APPEND
 	    );
 	    $this->line("Appended routes: $path");
@@ -70,6 +70,34 @@ class BlockchainPaymentsPublishCommand extends Command
 			'{{namespace}}',
 			$this->getAppNamespace(),
 			file_get_contents(__DIR__.'/stubs/controllers/BlockchainPaymentController.stub')
+		);
+	}
+
+	/**
+	 * Compiles the routes/api.php stub.
+	 *
+	 * @return string
+	 */
+	protected function compileApiRouteStub()
+	{
+		return str_replace(
+			'{{namespace}}',
+			$this->getAppNamespace(),
+            file_get_contents(__DIR__.'/stubs/routes/api.stub')
+		);
+	}
+
+	/**
+	 * Compiles the routes/web.php stub.
+	 *
+	 * @return string
+	 */
+	protected function compileWebRouteStub()
+	{
+		return str_replace(
+			'{{namespace}}',
+			$this->getAppNamespace(),
+            file_get_contents(__DIR__.'/stubs/routes/web.stub')
 		);
 	}
 }
