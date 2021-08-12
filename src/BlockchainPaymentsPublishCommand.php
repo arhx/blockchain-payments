@@ -65,7 +65,7 @@ class BlockchainPaymentsPublishCommand extends Command
 	{
 		return str_replace(
 			'{{namespace}}',
-            $this->laravel->getNamespace(),
+			$this->laravel->getNamespace(),
 			file_get_contents(__DIR__.'/stubs/controllers/BlockchainPaymentController.stub')
 		);
 	}
@@ -77,7 +77,11 @@ class BlockchainPaymentsPublishCommand extends Command
 	 */
 	protected function compileApiRouteStub()
 	{
-		return file_get_contents(__DIR__.'/stubs/routes/api.stub');
+		return str_replace(
+			'{{namespace}}',
+            $this->laravel->getNamespace(),
+            file_get_contents(__DIR__.'/stubs/routes/api.stub')
+		);
 	}
 
 	/**
@@ -87,6 +91,10 @@ class BlockchainPaymentsPublishCommand extends Command
 	 */
 	protected function compileWebRouteStub()
 	{
-		return file_get_contents(__DIR__.'/stubs/routes/web.stub');
+		return str_replace(
+			'{{namespace}}',
+            $this->laravel->getNamespace(),
+            file_get_contents(__DIR__.'/stubs/routes/web.stub')
+		);
 	}
 }
