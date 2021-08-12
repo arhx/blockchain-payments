@@ -3,12 +3,9 @@
 namespace Arhx\BlockchainPayments;
 
 use Illuminate\Console\Command;
-use Illuminate\Console\DetectsApplicationNamespace;
 
 class BlockchainPaymentsPublishCommand extends Command
 {
-
-	use DetectsApplicationNamespace;
     /**
      * The name and signature of the console command.
      *
@@ -68,7 +65,7 @@ class BlockchainPaymentsPublishCommand extends Command
 	{
 		return str_replace(
 			'{{namespace}}',
-			$this->getAppNamespace(),
+            $this->laravel->getNamespace(),
 			file_get_contents(__DIR__.'/stubs/controllers/BlockchainPaymentController.stub')
 		);
 	}
@@ -80,11 +77,7 @@ class BlockchainPaymentsPublishCommand extends Command
 	 */
 	protected function compileApiRouteStub()
 	{
-		return str_replace(
-			'{{namespace}}',
-			$this->getAppNamespace(),
-            file_get_contents(__DIR__.'/stubs/routes/api.stub')
-		);
+		return file_get_contents(__DIR__.'/stubs/routes/api.stub');
 	}
 
 	/**
@@ -94,10 +87,6 @@ class BlockchainPaymentsPublishCommand extends Command
 	 */
 	protected function compileWebRouteStub()
 	{
-		return str_replace(
-			'{{namespace}}',
-			$this->getAppNamespace(),
-            file_get_contents(__DIR__.'/stubs/routes/web.stub')
-		);
+		return file_get_contents(__DIR__.'/stubs/routes/web.stub');
 	}
 }

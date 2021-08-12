@@ -3,12 +3,9 @@
 namespace Arhx\BlockchainPayments;
 
 use Illuminate\Console\Command;
-use Illuminate\Console\DetectsApplicationNamespace;
 
 class BlockchainPaymentsFlushCommand extends Command
 {
-
-	use DetectsApplicationNamespace;
 	/**
 	 * The name and signature of the console command.
 	 *
@@ -35,19 +32,5 @@ class BlockchainPaymentsFlushCommand extends Command
 			'btc_replenishment_address' => null
 		]);
 		$this->line("All replenishment addresses was flushed");
-	}
-
-	/**
-	 * Compiles the HomeController stub.
-	 *
-	 * @return string
-	 */
-	protected function compileControllerStub()
-	{
-		return str_replace(
-			'{{namespace}}',
-			$this->getAppNamespace(),
-			file_get_contents(__DIR__.'/stubs/controllers/BlockchainPaymentController.stub')
-		);
 	}
 }

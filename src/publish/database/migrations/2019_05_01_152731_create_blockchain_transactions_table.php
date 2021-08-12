@@ -14,8 +14,8 @@ class CreateBlockchainTransactionsTable extends Migration
     public function up()
     {
         Schema::create('blockchain_transactions', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('user_id');
+            $table->id();
+            $table->unsignedBigInteger('user_id');
             //$table->unsignedInteger('payment_id');
             $table->decimal('btc_price');
             $table->bigInteger('amount_btc');
